@@ -35,6 +35,16 @@
    Tambah Materi
 </a>
 
+<a href="{{ route('owner.quizzes.index', $course->id) }}"
+   class="block bg-purple-500 text-white px-2 py-1 rounded">
+   Course Quiz
+</a>
+
+<a href="{{ route('owner.quizzes.create', $course->id) }}"
+   class="block bg-pink-500 text-white px-2 py-1 rounded">
+   Tambah Quiz
+</a>
+
 </div>
 
 </div>

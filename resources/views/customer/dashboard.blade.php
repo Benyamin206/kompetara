@@ -85,8 +85,12 @@
             @if($enroll->status === 'enrolled')
                 <a href="{{ route('customer.materials.index', $course->id) }}"
                    class="mt-2 block bg-green-500 hover:bg-green-600 text-white text-center px-3 py-2 rounded">
-                    Lihat
+                    Lihat Materi
                 </a>
+<a href="{{ route('customer.quizzes.show', [$course->id, $course->quizzes->first()->id]) }}"
+   class="mt-2 block bg-purple-500 hover:bg-purple-600 text-white text-center px-3 py-2 rounded">
+    Mulai Quiz
+</a>
             @endif
 
         @endif

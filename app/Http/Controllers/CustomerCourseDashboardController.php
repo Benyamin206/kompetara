@@ -20,4 +20,6 @@ class CustomerCourseDashboardController extends Controller
 
         return view('customer.dashboard', compact('courses', 'enrollments', 'profile'));
     }
+
+
 }

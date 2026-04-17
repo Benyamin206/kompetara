@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CustomerCourseDashboardController;
+use App\Http\Controllers\CustomerQuizController;
 use App\Http\Controllers\OwnerCourseDashboardController;
+use App\Http\Controllers\OwnerQuizController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
@@ -76,6 +78,24 @@ Route::middleware(['auth', 'role:pemilik_course'])
 
     Route::get('/materials/{material}/preview', [OwnerMaterialController::class, 'preview'])
         ->name('materials.preview');
+
+    Route::get('/courses/{course}/quizzes', [OwnerQuizController::class, 'index'])
+    ->name('quizzes.index');
+
+    Route::get('/courses/{course}/quizzes/create', [OwnerQuizController::class, 'create'])
+        ->name('quizzes.create');
+
+    Route::post('/courses/{course}/quizzes', [OwnerQuizController::class, 'store'])
+        ->name('quizzes.store');
+
+    Route::get('/quizzes/{quiz}/edit', [OwnerQuizController::class, 'edit'])
+    ->name('quizzes.edit');
+
+    Route::put('/quizzes/{quiz}', [OwnerQuizController::class, 'update'])
+        ->name('quizzes.update');
+
+    Route::delete('/quizzes/{quiz}', [OwnerQuizController::class, 'destroy'])
+        ->name('quizzes.destroy');
 });
 
 
@@ -100,6 +120,15 @@ Route::middleware(['auth', 'role:customer'])
 
     Route::post('/courses/{course}/materials/{material}/complete', [CustomerMaterialController::class, 'complete'])
         ->name('materials.complete');
+
+    Route::get('/courses/{course}/quizzes', [CustomerQuizController::class, 'index'])
+        ->name('quizzes.index');
+
+    Route::post('/quizzes/{quiz}/answer', [CustomerQuizController::class, 'answer'])
+        ->name('quizzes.answer');
+
+    Route::get('/courses/{course}/quizzes/{quiz}', [CustomerQuizController::class, 'show'])
+    ->name('quizzes.show');
 });
 
 
