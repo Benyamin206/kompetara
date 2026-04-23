@@ -5,13 +5,18 @@
     Tambah Quiz - {{ $course->title }}
 </h1>
 
-<form method="POST" action="{{ route('owner.quizzes.store', $course->id) }}">
+<form method="POST" enctype="multipart/form-data" action="{{ route('owner.quizzes.store', $course->id) }}">
     @csrf
 
     <div class="mb-3">
         <label class="block">Pertanyaan</label>
         <textarea name="question" class="w-full border rounded p-2"></textarea>
         @error('question') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
+    </div>
+
+    <div class="mb-3">
+        <label class="block">Gambar (bisa lebih dari 1)</label>
+        <input type="file" name="images[]" multiple class="w-full border rounded p-2">
     </div>
 
     <div class="mb-3">
@@ -26,7 +31,7 @@
         @error('exp_reward') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
     </div>
 
-    <button class="bg-green-500 text-white px-4 py-2 rounded">
+    <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded">
         Simpan Quiz
     </button>
 </form>

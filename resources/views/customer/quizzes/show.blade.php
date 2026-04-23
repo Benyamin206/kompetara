@@ -40,6 +40,15 @@
         {{ $quiz->question }}
     </p>
 
+@if($quiz->images->count())
+    <div class="flex gap-3 mb-4 flex-wrap">
+        @foreach($quiz->images as $img)
+            <img src="{{ $img->image_url }}"
+                 class="w-48 h-48 object-cover rounded border shadow">
+        @endforeach
+    </div>
+@endif
+
     @php
         $isDone = isset($progress[$quiz->id]) && $progress[$quiz->id]->is_correct;
     @endphp

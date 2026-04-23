@@ -96,6 +96,12 @@ Route::middleware(['auth', 'role:pemilik_course'])
 
     Route::delete('/quizzes/{quiz}', [OwnerQuizController::class, 'destroy'])
         ->name('quizzes.destroy');
+
+    Route::get('/courses/{course}/edit', [OwnerCourseController::class, 'edit'])
+    ->name('courses.edit');
+
+    Route::put('/courses/{course}', [OwnerCourseController::class, 'update'])
+        ->name('courses.update');
 });
 
 

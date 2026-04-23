@@ -5,7 +5,7 @@
     Edit Quiz
 </h1>
 
-<form method="POST" action="{{ route('owner.quizzes.update', $quiz->id) }}">
+    <form method="POST" enctype="multipart/form-data" action="{{ route('owner.quizzes.update', $quiz->id) }}">
     @csrf
     @method('PUT')
 
@@ -30,6 +30,20 @@
                class="w-full border rounded p-2">
         @error('exp_reward') <p class="text-red-500 text-sm">{{ $message }}</p> @enderror
     </div>
+
+    <div class="mb-3">
+    <label class="block">Tambah Gambar Baru</label>
+    <input type="file" name="images[]" multiple class="w-full border rounded p-2">
+</div>
+
+<div class="mb-3">
+    <label class="block">Gambar Saat Ini</label>
+    <div class="flex gap-2 flex-wrap">
+        @foreach($quiz->images as $img)
+            <img src="{{ $img->image_url }}" class="w-24 h-24 object-cover rounded">
+        @endforeach
+    </div>
+</div>
 
     <button class="bg-green-500 text-white px-4 py-2 rounded">
         Update Quiz

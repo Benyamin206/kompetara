@@ -12,4 +12,9 @@ class Quiz extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    public function images()
+{
+    return $this->hasMany(QuizImage::class);
+}
 }

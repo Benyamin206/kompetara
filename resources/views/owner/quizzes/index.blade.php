@@ -16,6 +16,11 @@
     <p class="font-semibold">{{ $quiz->question }}</p>
     <p class="text-sm text-gray-600">Jawaban: {{ $quiz->correct_answer }}</p>
     <p class="text-sm">EXP: {{ $quiz->exp_reward }}</p>
+    <div class="flex gap-2 mt-2">
+    @foreach($quiz->images as $img)
+        <img src="{{ $img->image_url }}" class="w-16 h-16 object-cover rounded">
+    @endforeach
+</div>
         <div class="mt-2 flex gap-2">
         <a href="{{ route('owner.quizzes.edit', $quiz->id) }}"
            class="bg-yellow-500 text-white px-2 py-1 rounded">

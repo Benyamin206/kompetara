@@ -19,9 +19,16 @@ class CustomerQuizController extends Controller
             ->where('status', 'enrolled')
             ->firstOrFail();
 
-        $quizzes = $course->quizzes;
+        // $quizzes = $course->quizzes;
+        $quizzes = $course->quizzes()->with('images')->get();
 
-        return view('customer.quizzes.index', compact('course', 'quizzes', 'enrollment'));
+        $progress = QuizProgress::where('enrollment_id', $enrollment->id)
+    ->where('is_correct', true)
+    ->pluck('quiz_id')
+    ->toArray();
+
+        //return view('customer.quizzes.index', compact('course', 'quizzes', 'enrollment'));
+        return view('customer.quizzes.index', compact('course', 'quizzes', 'enrollment', 'progress'));
     }
 
 public function answer(Request $request, Quiz $quiz)
@@ -90,13 +97,18 @@ public function show(Course $course, Quiz $quiz)
         ->where('status', 'enrolled')
         ->firstOrFail();
 
-    $quizzes = $course->quizzes()->get();
+    // $quizzes = $course->quizzes()->get();
+
+    $quizzes = $course->quizzes()->with('images')->get();
 
     // 🔥 ambil semua progress user
     $progress = QuizProgress::where('enrollment_id', $enrollment->id)
         ->get()
         ->keyBy('quiz_id');
 
+
+        $quiz->load('images');
+        
     return view('customer.quizzes.show', compact(
         'course',
         'quiz',

@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Course extends Model
 {
-    protected $fillable = ['owner_id', 'title', 'description', 'is_published'];
+    protected $fillable = ['owner_id', 'title', 'description', 'is_published', 'image_url','image_public_id'];
+
 
     public function owner()
     {
