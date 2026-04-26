@@ -25,7 +25,7 @@
           class="border p-2 w-full mt-2"
           placeholder="Deskripsi">{{ old('description') }}</textarea>
 
-          <input type="file" name="image" class="border p-2 w-full mt-2">
+        Gambar :   <input type="file" name="image" class="border p-2 w-full mt-2">
 
 <button class="bg-blue-500 text-white px-4 py-2 mt-3">
 Simpan

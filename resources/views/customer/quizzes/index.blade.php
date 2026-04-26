@@ -29,7 +29,7 @@
     <div class="flex gap-2 mb-3 flex-wrap">
         @foreach($quiz->images as $img)
             <img src="{{ $img->image_url }}"
-                 class="w-32 h-32 object-cover rounded border">
+                 class="w-64 h-64 object-cover rounded border">
         @endforeach
     </div>
 @endif
