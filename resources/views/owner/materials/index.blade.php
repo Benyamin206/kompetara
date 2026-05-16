@@ -21,6 +21,29 @@
             </p>
         </div>
 
+@if($material->images->count())
+
+<div class="flex gap-3 flex-wrap mt-3">
+
+    @foreach($material->images as $img)
+
+    <div class="border rounded p-2">
+
+        <img src="{{ $img->image_url }}"
+             class="w-24 h-24 object-cover rounded">
+
+        <p class="text-xs mt-1 text-center">
+            {{ $img->name }}
+        </p>
+
+    </div>
+
+    @endforeach
+
+</div>
+
+@endif
+
         {{-- ACTION BUTTONS --}}
         <div class="space-x-1">
 

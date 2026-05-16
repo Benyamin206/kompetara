@@ -58,17 +58,49 @@
             ✅ Sudah dijawab dengan benar
         </div>
     @else
-        <form method="POST" action="{{ route('customer.quizzes.answer', $quiz->id) }}">
-            @csrf
+<form method="POST" action="{{ route('customer.quizzes.answer', $quiz->id) }}">
+@csrf
 
-            <input type="text" name="answer"
-                   class="w-full border rounded p-2 mb-3"
-                   placeholder="Masukkan jawaban...">
+{{-- ESSAY --}}
+@if($quiz->type === 'essay')
 
-            <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-                Submit Jawaban
-            </button>
-        </form>
+    <input type="text"
+           name="answer"
+           class="w-full border rounded p-2 mb-3"
+           placeholder="Masukkan jawaban...">
+
+@endif
+
+{{-- MULTIPLE CHOICE --}}
+@if($quiz->type === 'multiple_choice')
+
+    <div class="space-y-3 mb-4">
+
+        @foreach($quiz->options as $option)
+
+            <label class="flex items-center gap-3 border rounded p-3 hover:bg-gray-50 cursor-pointer">
+
+                <input type="radio"
+                       name="option_id"
+                       value="{{ $option->id }}">
+
+                <span>
+                    {{ $option->option_text }}
+                </span>
+
+            </label>
+
+        @endforeach
+
+    </div>
+
+@endif
+
+<button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+    Submit Jawaban
+</button>
+
+</form>
     @endif
 
 </div>

@@ -12,6 +12,22 @@
 
 <div class="mt-4 space-y-3">
 @foreach($quizzes as $quiz)
+
+<p class="text-xs text-blue-500">
+    Tipe: {{ $quiz->type }}
+</p>
+
+@if($quiz->type === 'multiple_choice')
+    <ul class="text-sm mt-1">
+        @foreach($quiz->options as $opt)
+            <li>
+                {{ $opt->option_text }}
+                @if($opt->is_correct) ✅ @endif
+            </li>
+        @endforeach
+    </ul>
+@endif
+
 <div class="border p-3 rounded">
     <p class="font-semibold">{{ $quiz->question }}</p>
     <p class="text-sm text-gray-600">Jawaban: {{ $quiz->correct_answer }}</p>

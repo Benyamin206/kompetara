@@ -32,18 +32,74 @@ public function store(Request $request, Course $course)
 {
     $this->authorizeOwner($course);
 
+    // 🔥 VALIDASI LENGKAP
     $validated = $request->validate([
+        'type' => 'required|in:essay,multiple_choice',
         'question' => 'required|string',
-        'correct_answer' => 'required|string',
         'exp_reward' => 'required|integer|min:0',
 
-        // multiple images
-        'images.*' => 'image|max:2048'
+        // ESSAY
+        'correct_answer' => 'required_if:type,essay|string|nullable',
+
+        // MULTIPLE CHOICE
+        'options' => 'required_if:type,multiple_choice|array|min:2',
+        'options.*.text' => 'required_if:type,multiple_choice|string|min:1',
+        'correct_option' => 'required_if:type,multiple_choice|integer|min:0|max:3',
+
+        'images.*' => 'image|max:2048',
+    ], [
+        'question.required' => 'Pertanyaan wajib diisi.',
+        'exp_reward.required' => 'EXP wajib diisi.',
+
+        'correct_answer.required_if' => 'Jawaban benar untuk essay wajib diisi.',
+
+        'options.required_if' => 'Pilihan jawaban wajib diisi.',
+        'options.*.text.required_if' => 'Semua pilihan jawaban harus diisi dan tidak boleh kosong.',
+
+        'correct_option.required_if' => 'Pilih jawaban yang benar untuk multiple choice.',
+        'correct_option.integer' => 'Jawaban benar harus valid.',
     ]);
 
-    $quiz = $course->quizzes()->create($validated);
+    // 🔥 VALIDASI TAMBAHAN (ANTI EMPTY STRING / SPASI)
+    if ($request->type === 'multiple_choice') {
 
-    // Upload images ke Cloudinary
+        foreach ($request->options as $opt) {
+            if (!isset($opt['text']) || trim($opt['text']) === '') {
+                return back()
+                    ->withErrors(['options' => 'Semua pilihan jawaban tidak boleh kosong'])
+                    ->withInput();
+            }
+        }
+
+        if ($request->correct_option === null || $request->correct_option === '') {
+            return back()
+                ->withErrors(['correct_option' => 'Pilih jawaban yang benar'])
+                ->withInput();
+        }
+    }
+
+    // 🔥 CREATE QUIZ
+    $quiz = $course->quizzes()->create([
+        'question' => $request->question,
+        'exp_reward' => $request->exp_reward,
+        'type' => $request->type,
+        'correct_answer' => $request->type === 'essay'
+            ? $request->correct_answer
+            : null
+    ]);
+
+    // 🔥 MULTIPLE CHOICE OPTIONS
+    if ($request->type === 'multiple_choice') {
+        foreach ($request->options as $index => $opt) {
+            $quiz->options()->create([
+                'option_text' => $opt['text'],
+                'is_correct' => $index == $request->correct_option,
+                'order' => $index
+            ]);
+        }
+    }
+
+    // 🔥 IMAGE UPLOAD
     if ($request->hasFile('images')) {
         foreach ($request->file('images') as $index => $image) {
 

@@ -29,19 +29,23 @@ class CustomerMaterialController extends Controller
         return view('customer.materials.index', compact('course', 'materials', 'progress'));
     }
 
-    public function show(Course $course, CourseMaterial $material)
-    {
-        $enrollment = Enrollment::where('user_id', auth()->id())
-            ->where('course_id', $course->id)
-            ->first();
+public function show(Course $course, CourseMaterial $material)
+{
+    $material->load('images');
 
-        $progress = MaterialProgress::where('enrollment_id', $enrollment->id)
-            ->where('material_id', $material->id)
-            ->first();
+    $enrollment = Enrollment::where('user_id', auth()->id())
+        ->where('course_id', $course->id)
+        ->first();
 
-        return view('customer.materials.show', compact('course', 'material', 'progress'));
-    }
+    $progress = MaterialProgress::where('enrollment_id', $enrollment->id)
+        ->where('material_id', $material->id)
+        ->first();
 
+    return view(
+        'customer.materials.show',
+        compact('course', 'material', 'progress')
+    );
+}
     public function complete(Course $course, CourseMaterial $material)
     {
         $userId = auth()->id();

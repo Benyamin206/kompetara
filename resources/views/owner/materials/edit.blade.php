@@ -3,35 +3,168 @@
 
 <h1 class="text-xl font-bold">Edit Materi</h1>
 
-<form method="POST" action="{{ route('owner.materials.update', $material->id) }}" class="mt-4 space-y-4">
+<form method="POST"
+      enctype="multipart/form-data"
+      action="{{ route('owner.materials.update', $material->id) }}"
+      class="mt-4 space-y-4">
+
 @csrf
 @method('PUT')
 
 <div>
     <label>Urutan</label>
-    <input type="number" name="order_number" value="{{ $material->order_number }}" class="border w-full p-2">
+
+    <input type="number"
+           name="order_number"
+           value="{{ $material->order_number }}"
+           class="border w-full p-2">
 </div>
 
 <div>
     <label>Judul</label>
-    <input type="text" name="title" value="{{ $material->title }}" class="border w-full p-2">
+
+    <input type="text"
+           name="title"
+           value="{{ $material->title }}"
+           class="border w-full p-2">
 </div>
 
 <div>
     <label>Konten</label>
-    <textarea name="content" class="border w-full p-2">{{ $material->content }}</textarea>
+
+    <textarea name="content"
+              class="border w-full p-2">{{ $material->content }}</textarea>
 </div>
 
 <div>
     <label>EXP Reward</label>
-    <input type="number" name="exp_reward" value="{{ $material->exp_reward }}" class="border w-full p-2">
+
+    <input type="number"
+           name="exp_reward"
+           value="{{ $material->exp_reward }}"
+           class="border w-full p-2">
 </div>
 
-<button class="bg-blue-500 text-white px-3 py-2">
-Update
+{{-- TAMBAH GAMBAR --}}
+<div>
+
+    <label class="font-bold">Tambah Gambar Baru</label>
+
+    <div id="image-wrapper" class="space-y-3 mt-2">
+
+        <div class="border p-3 rounded">
+
+            <input type="file"
+                   name="images[]"
+                   class="border w-full p-2">
+
+            <input type="text"
+                   name="image_names[]"
+                   placeholder="Nama gambar"
+                   class="border w-full p-2 mt-2">
+
+        </div>
+
+    </div>
+
+    <button type="button"
+            onclick="addImageInput()"
+            class="bg-gray-500 text-white px-3 py-1 rounded mt-2">
+        + Tambah Input Gambar
+    </button>
+
+</div>
+
+{{-- GAMBAR SAAT INI --}}
+<div>
+
+    <label class="font-bold">Gambar Saat Ini</label>
+
+    <div class="grid grid-cols-2 gap-4 mt-3">
+
+@foreach($material->images as $img)
+
+<div class="border p-2 rounded">
+
+    <img src="{{ $img->image_url }}"
+         class="w-full h-40 object-cover rounded">
+
+    <p class="mt-2 text-sm font-semibold">
+        {{ $img->name }}
+    </p>
+
+    <button type="button"
+            onclick="deleteImage({{ $img->id }})"
+            class="bg-red-500 text-white px-3 py-1 rounded text-sm w-full mt-2">
+
+        Hapus Gambar
+
+    </button>
+
+</div>
+
+@endforeach
+
+    </div>
+
+</div>
+
+<button class="bg-blue-500 text-white px-3 py-2 rounded">
+    Update
 </button>
 
 </form>
 
 </div>
+
+<script>
+
+function addImageInput() {
+
+    let wrapper = document.getElementById('image-wrapper');
+
+    wrapper.innerHTML += `
+        <div class="border p-3 rounded">
+
+            <input type="file"
+                   name="images[]"
+                   class="border w-full p-2">
+
+            <input type="text"
+                   name="image_names[]"
+                   placeholder="Nama gambar"
+                   class="border w-full p-2 mt-2">
+
+        </div>
+    `;
+}
+
+function deleteImage(imageId) {
+
+    if (!confirm('Hapus gambar ini?')) {
+        return;
+    }
+
+    fetch(`/owner/material-images/${imageId}`, {
+        method: 'DELETE',
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'Accept': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            location.reload();
+        } else {
+            alert('Gagal menghapus gambar');
+        }
+    })
+    .catch(error => {
+        console.error(error);
+        alert('Terjadi kesalahan');
+    });
+}
+
+</script>
+
 </x-app-layout>

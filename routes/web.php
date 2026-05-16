@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerCourseDashboardController;
 use App\Http\Controllers\CustomerQuizController;
 use App\Http\Controllers\OwnerCourseDashboardController;
@@ -26,7 +27,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
         return view('admin.home');
     });
 
-    Route::get('/users', [UserController::class, 'index']);
+    Route::get('/dashboard', [AdminController::class, 'index'])
+        ->name('admin.dashboard');
+
+    Route::get('/users', [UserController::class, 'index'])->name('admin.users.index');
     Route::get('/users/create', [UserController::class, 'create']);
     Route::post('/users', [UserController::class, 'store']);
     Route::get('/users/{id}/toggle', [UserController::class, 'toggle']);
@@ -78,6 +82,9 @@ Route::middleware(['auth', 'role:pemilik_course'])
 
     Route::get('/materials/{material}/preview', [OwnerMaterialController::class, 'preview'])
         ->name('materials.preview');
+
+    Route::delete('/material-images/{image}', [OwnerMaterialController::class, 'deleteImage'])
+    ->name('materials.images.destroy');
 
     Route::get('/courses/{course}/quizzes', [OwnerQuizController::class, 'index'])
     ->name('quizzes.index');
@@ -154,7 +161,7 @@ Route::middleware(['auth', 'role:customer'])
     return match ($user->role->nama_role) {
         'pemilik_course' => redirect()->route('owner.dashboard'),
         'customer' => redirect()->route('customer.dashboard'),
-        'admin' => redirect()->route('admin.home'),
+        'admin' => redirect()->route('admin.dashboard'),
         default => abort(403),
     };
 })->middleware(['auth'])->name('dashboard');
