@@ -41,10 +41,12 @@
     </p>
 
 @if($quiz->images->count())
-    <div class="flex gap-3 mb-4 flex-wrap">
+    <div class="flex flex-col gap-6 mb-6">
         @foreach($quiz->images as $img)
-            <img src="{{ $img->image_url }}"
-                 class="w-48 h-48 object-cover rounded border shadow">
+            <div class="w-full">
+                <img src="{{ $img->image_url }}"
+                     class="w-full max-h-[700px] object-contain rounded border shadow bg-white">
+            </div>
         @endforeach
     </div>
 @endif

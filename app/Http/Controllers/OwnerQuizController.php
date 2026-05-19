@@ -33,32 +33,29 @@ public function store(Request $request, Course $course)
     $this->authorizeOwner($course);
 
     // 🔥 VALIDASI LENGKAP
-    $validated = $request->validate([
-        'type' => 'required|in:essay,multiple_choice',
-        'question' => 'required|string',
-        'exp_reward' => 'required|integer|min:0',
+$validated = $request->validate([
+    'type' => 'required|in:essay,multiple_choice',
+    'question' => 'required|string',
+    'exp_reward' => 'required|integer|min:0',
 
-        // ESSAY
-        'correct_answer' => 'required_if:type,essay|string|nullable',
+    // ESSAY
+    'correct_answer' => 'required_if:type,essay|nullable|string',
 
-        // MULTIPLE CHOICE
-        'options' => 'required_if:type,multiple_choice|array|min:2',
-        'options.*.text' => 'required_if:type,multiple_choice|string|min:1',
-        'correct_option' => 'required_if:type,multiple_choice|integer|min:0|max:3',
+    // MULTIPLE CHOICE
+    'options' => 'required_if:type,multiple_choice|array',
+    'options.*.text' => 'nullable|string|min:1',
+    'correct_option' => 'required_if:type,multiple_choice|integer',
 
-        'images.*' => 'image|max:2048',
-    ], [
-        'question.required' => 'Pertanyaan wajib diisi.',
-        'exp_reward.required' => 'EXP wajib diisi.',
+    'images.*' => 'image|max:2048',
+], [
+    'question.required' => 'Pertanyaan wajib diisi.',
+    'exp_reward.required' => 'EXP wajib diisi.',
 
-        'correct_answer.required_if' => 'Jawaban benar untuk essay wajib diisi.',
+    'correct_answer.required_if' => 'Jawaban benar untuk essay wajib diisi.',
 
-        'options.required_if' => 'Pilihan jawaban wajib diisi.',
-        'options.*.text.required_if' => 'Semua pilihan jawaban harus diisi dan tidak boleh kosong.',
-
-        'correct_option.required_if' => 'Pilih jawaban yang benar untuk multiple choice.',
-        'correct_option.integer' => 'Jawaban benar harus valid.',
-    ]);
+    'options.required_if' => 'Pilihan jawaban wajib diisi.',
+    'correct_option.required_if' => 'Pilih jawaban yang benar untuk multiple choice.',
+]);
 
     // 🔥 VALIDASI TAMBAHAN (ANTI EMPTY STRING / SPASI)
     if ($request->type === 'multiple_choice') {
@@ -152,17 +149,93 @@ public function update(Request $request, Quiz $quiz)
     $this->authorizeOwner($quiz->course);
 
     $validated = $request->validate([
+
+        'type' => 'required|in:essay,multiple_choice',
+
         'question' => 'required|string',
-        'correct_answer' => 'required|string',
         'exp_reward' => 'required|integer|min:0',
 
-        'images.*' => 'image|max:2048'
+        // ESSAY
+        'correct_answer' => 'required_if:type,essay|nullable|string',
+
+        // MULTIPLE CHOICE
+        'options' => 'required_if:type,multiple_choice|array',
+        'options.*.text' => 'nullable|string',
+        'correct_option' => 'required_if:type,multiple_choice|integer',
+
+        // IMAGE
+        'images.*' => 'image|max:2048',
+
+        // DELETE IMAGE
+        'delete_images' => 'array|nullable',
+        'delete_images.*' => 'integer',
     ]);
 
-    $quiz->update($validated);
+    // VALIDASI MANUAL MULTIPLE CHOICE
+    if ($request->type === 'multiple_choice') {
 
-    // Tambah gambar baru (tidak hapus lama)
+        if (count($request->options ?? []) < 2) {
+            return back()
+                ->withErrors([
+                    'options' => 'Minimal 2 pilihan jawaban'
+                ])
+                ->withInput();
+        }
+
+        foreach ($request->options as $opt) {
+
+            if (!isset($opt['text']) || trim($opt['text']) === '') {
+
+                return back()
+                    ->withErrors([
+                        'options' => 'Semua pilihan jawaban wajib diisi'
+                    ])
+                    ->withInput();
+            }
+        }
+    }
+
+    // UPDATE QUIZ
+    $quiz->update([
+        'question' => $request->question,
+        'exp_reward' => $request->exp_reward,
+        'type' => $request->type,
+
+        'correct_answer' => $request->type === 'essay'
+            ? $request->correct_answer
+            : null
+    ]);
+
+    // UPDATE OPTIONS
+    if ($request->type === 'multiple_choice') {
+
+        // hapus option lama
+        $quiz->options()->delete();
+
+        // insert baru
+        foreach ($request->options as $index => $opt) {
+
+            $quiz->options()->create([
+                'option_text' => $opt['text'],
+                'is_correct' => $index == $request->correct_option,
+                'order' => $index
+            ]);
+        }
+    } else {
+
+        // jika essay → hapus semua option lama
+        $quiz->options()->delete();
+    }
+
+    // DELETE IMAGE
+    if ($request->filled('delete_images')) {
+
+        QuizImage::whereIn('id', $request->delete_images)->delete();
+    }
+
+    // UPLOAD NEW IMAGE
     if ($request->hasFile('images')) {
+
         $currentCount = $quiz->images()->count();
 
         foreach ($request->file('images') as $index => $image) {

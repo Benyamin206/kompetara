@@ -336,7 +336,7 @@
             Platform Belajar Programming
         </div>
         <h1 class="fade-up delay-1">
-            Ukur & Tingkatkan<br>
+            Tingkatkan<br>
             <span>Kemampuan Programming</span><br>
             Kamu
         </h1>
@@ -360,8 +360,6 @@
         <span class="lang-chip">Python</span>
         <span class="lang-chip">JavaScript</span>
         <span class="lang-chip">Java</span>
-        <span class="lang-chip">C++</span>
-        <span class="lang-chip">PHP</span>
     </div>
 
     {{-- Features --}}

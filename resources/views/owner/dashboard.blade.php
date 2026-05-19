@@ -4,15 +4,22 @@
 <x-flash />
 
 {{-- HEADER --}}
-<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+<div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
     <h1 class="text-2xl font-bold text-gray-800">
         Owner Dashboard
     </h1>
 
-    <a href="{{ route('owner.courses.create') }}"
-       class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg text-center w-full sm:w-auto">
-        + Tambah Course
-    </a>
+    <div class="flex flex-col sm:flex-row gap-2">
+        <a href="{{ route('owner.courses.create') }}"
+           class="bg-slate-800 hover:bg-slate-700 text-white px-4 py-2 rounded-lg text-center text-sm font-medium transition-colors">
+            + Tambah Course
+        </a>
+
+        <a href="{{ route('owner.bundle-enrollments.index') }}"
+           class="border border-slate-300 hover:bg-slate-100 text-slate-700 px-4 py-2 rounded-lg text-center text-sm font-medium transition-colors">
+            Approve Bundle Enrollment
+        </a>
+    </div>
 </div>
 
 {{-- COURSE LIST --}}
@@ -20,59 +27,63 @@
 
 @foreach($courses as $course)
 
-<div class="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-4 flex flex-col">
+<div class="bg-white border border-gray-200 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col">
 
-    {{-- ✅ GAMBAR COURSE --}}
+    {{-- GAMBAR COURSE --}}
     @if($course->image_url)
         <img src="{{ $course->image_url }}"
              class="w-full h-40 sm:h-44 object-cover rounded-lg mb-3">
     @else
-        <div class="w-full h-40 sm:h-44 bg-gray-200 rounded-lg mb-3 flex items-center justify-center text-gray-400 text-sm">
+        <div class="w-full h-40 sm:h-44 bg-gray-100 rounded-lg mb-3 flex items-center justify-center text-gray-400 text-sm">
             No Image
         </div>
     @endif
 
     {{-- TITLE --}}
-    <h2 class="font-semibold text-lg text-gray-800 line-clamp-1">
+    <h2 class="font-semibold text-base text-gray-800 line-clamp-1">
         {{ $course->title }}
     </h2>
 
     {{-- DESCRIPTION --}}
-    <p class="text-sm text-gray-600 mt-1 line-clamp-2">
+    <p class="text-sm text-gray-500 mt-1 line-clamp-2">
         {{ $course->description }}
     </p>
 
     {{-- ACTIONS --}}
     <div class="mt-4 space-y-2">
 
+        {{-- Primary action: Edit --}}
         <a href="{{ route('owner.courses.edit', $course->id) }}"
-           class="block text-center bg-indigo-500 hover:bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm">
+           class="flex items-center justify-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-3 py-2 rounded-lg text-sm font-medium transition-colors">
            ✏️ Edit Course
         </a>
 
-        <a href="{{ route('owner.materials.index', $course->id) }}"
-           class="block text-center bg-green-500 hover:bg-green-600 text-white px-3 py-2 rounded-lg text-sm">
-           Course Material
-        </a>
+        {{-- Secondary actions: outlined style --}}
+        <div class="grid grid-cols-2 gap-2">
+            <a href="{{ route('owner.materials.index', $course->id) }}"
+               class="flex items-center justify-center gap-1 border border-slate-300 hover:bg-slate-50 text-slate-700 px-2 py-2 rounded-lg text-xs font-medium transition-colors text-center">
+                Materi
+            </a>
 
-        <a href="{{ route('owner.enrollments.index', $course->id) }}"
-           class="block text-center bg-yellow-500 hover:bg-yellow-600 text-white px-3 py-2 rounded-lg text-sm">
-           Enroll Approval
-        </a>
+            <a href="{{ route('owner.enrollments.index', $course->id) }}"
+               class="flex items-center justify-center gap-1 border border-slate-300 hover:bg-slate-50 text-slate-700 px-2 py-2 rounded-lg text-xs font-medium transition-colors text-center">
+                Enroll
+            </a>
 
-        <a href="{{ route('owner.materials.create', $course->id) }}"
-           class="block text-center bg-gray-500 hover:bg-gray-600 text-white px-3 py-2 rounded-lg text-sm">
-           Tambah Materi
-        </a>
+            <a href="{{ route('owner.materials.create', $course->id) }}"
+               class="flex items-center justify-center gap-1 border border-slate-300 hover:bg-slate-50 text-slate-700 px-2 py-2 rounded-lg text-xs font-medium transition-colors text-center">
+                Tambah Materi
+            </a>
 
-        <a href="{{ route('owner.quizzes.index', $course->id) }}"
-           class="block text-center bg-purple-500 hover:bg-purple-600 text-white px-3 py-2 rounded-lg text-sm">
-           Course Quiz
-        </a>
+            <a href="{{ route('owner.quizzes.index', $course->id) }}"
+               class="flex items-center justify-center gap-1 border border-slate-300 hover:bg-slate-50 text-slate-700 px-2 py-2 rounded-lg text-xs font-medium transition-colors text-center">
+                Quiz
+            </a>
+        </div>
 
         <a href="{{ route('owner.quizzes.create', $course->id) }}"
-           class="block text-center bg-pink-500 hover:bg-pink-600 text-white px-3 py-2 rounded-lg text-sm">
-           Tambah Quiz
+           class="flex items-center justify-center gap-2 border border-slate-300 hover:bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium transition-colors">
+           ➕ Tambah Quiz
         </a>
 
     </div>

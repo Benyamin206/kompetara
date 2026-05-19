@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CustomerCourseDashboardController;
 use App\Http\Controllers\CustomerQuizController;
+use App\Http\Controllers\OwnerBundleEnrollmentController;
 use App\Http\Controllers\OwnerCourseDashboardController;
 use App\Http\Controllers\OwnerQuizController;
 use App\Http\Controllers\ProfileController;
@@ -67,6 +68,16 @@ Route::middleware(['auth', 'role:pemilik_course'])
 
     Route::post('/enrollments/{enrollment}/approve', [OwnerEnrollController::class, 'approve'])
         ->name('enrollments.approve');
+
+    Route::get(
+        '/bundle-enrollments',
+        [OwnerBundleEnrollmentController::class, 'index']
+    )->name('bundle-enrollments.index');
+
+    Route::post(
+        '/bundle-enrollments/{user}/approve',
+        [OwnerBundleEnrollmentController::class, 'approve']
+    )->name('bundle-enrollments.approve');
 
     Route::get('/materials/{material}/edit', [OwnerMaterialController::class, 'edit'])
         ->name('materials.edit');
